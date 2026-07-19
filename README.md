@@ -21,11 +21,20 @@ anyone to make their own. Everything you need to plan the big day in one calm pl
 - **Details** — names, date, venue, city, and free-form notes. Includes one-click
   **export / import** so you can back up your plan or move it between devices.
 
-## Privacy
+## Living document & sync
 
-There is no account and no server. Every plan is stored locally in your browser
-(`localStorage`), so your information stays on your device. Use **Details → Export backup**
-to save a copy.
+The planner works two ways:
+
+- **Local mode (default):** with no cloud configured, every plan is saved in your
+  browser (`localStorage`) — private to your device.
+- **Shared cloud sync:** connect a free [Supabase](https://supabase.com) project and
+  the plan becomes a living document — every change auto-saves to the cloud and syncs
+  between you and your partner within seconds, with no accounts to manage. Access is
+  controlled by a secret token in a private share link. See **[SETUP.md](./SETUP.md)**
+  for the five-minute, one-time setup.
+
+Either way there are no passwords and no tracking. In cloud mode, guard the share link.
+You can still download a backup any time from **Details → Export backup**.
 
 ## Running it locally
 

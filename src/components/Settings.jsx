@@ -1,8 +1,22 @@
+import { useState } from 'react'
 import { prettyDate, daysUntil } from '../lib/format.js'
 
-export default function Settings({ details, setDetails }) {
+export default function Settings({ details, setDetails, sync }) {
+  const [copied, setCopied] = useState(false)
+
   function set(patch) {
     setDetails({ ...details, ...patch })
+  }
+
+  async function copyShare() {
+    const url = sync.share()
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      window.prompt('Copy your shared link:', url)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   function exportData() {
@@ -95,11 +109,32 @@ export default function Settings({ details, setDetails }) {
         </div>
       </div>
 
+      {sync?.configured && (
+        <>
+          <h3 className="section-title">Share &amp; sync</h3>
+          <div className="card card-pad" style={{ maxWidth: 640 }}>
+            <p className="muted" style={{ marginTop: 0 }}>
+              This is your private plan link. Open it on any device — or send it to
+              {' '}{details.partner2 || 'your partner'} — and every change syncs automatically.
+              Anyone with the link can view and edit, so keep it between the two of you.
+            </p>
+            <div className="row">
+              <div className="field" style={{ flex: 2 }}>
+                <label>Your shared plan link</label>
+                <input readOnly value={sync.share()} onFocus={(e) => e.target.select()} />
+              </div>
+              <button className="btn" onClick={copyShare}>{copied ? 'Copied ✓' : 'Copy link'}</button>
+            </div>
+          </div>
+        </>
+      )}
+
       <h3 className="section-title">Your data</h3>
       <div className="card card-pad" style={{ maxWidth: 640 }}>
         <p className="muted" style={{ marginTop: 0 }}>
-          Everything is stored privately in this browser — nothing is uploaded anywhere.
-          Back it up or move it to another device with export / import.
+          {sync?.configured
+            ? 'Your plan is saved to the cloud automatically. You can also download a backup copy or restore one here.'
+            : 'Everything is stored privately in this browser — nothing is uploaded anywhere. Back it up or move it to another device with export / import.'}
         </p>
         <div className="row">
           <button className="btn" onClick={exportData}>Export backup</button>

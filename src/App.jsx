@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { usePersistentState } from './lib/storage.js'
+import { useSection, useSync } from './store.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import Checklist from './components/Checklist.jsx'
 import Guests from './components/Guests.jsx'
 import Budget from './components/Budget.jsx'
 import Vendors from './components/Vendors.jsx'
 import Settings from './components/Settings.jsx'
+import SyncBadge from './components/SyncBadge.jsx'
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard' },
@@ -16,24 +17,14 @@ const TABS = [
   { id: 'settings', label: 'Details' },
 ]
 
-const DEFAULT_DETAILS = {
-  partner1: 'Tim',
-  partner2: 'Danielle',
-  date: '',
-  venue: '',
-  city: '',
-  notes: '',
-}
-
 export default function App() {
   const [tab, setTab] = useState('dashboard')
-  const [details, setDetails] = usePersistentState('details', DEFAULT_DETAILS)
-
-  // Shared collections live here so the dashboard can summarize them.
-  const guestsState = usePersistentState('guests', [])
-  const budgetState = usePersistentState('budget', null) // null → seed defaults in Budget
-  const checklistState = usePersistentState('checklist', null)
-  const vendorsState = usePersistentState('vendors', [])
+  const [details, setDetails] = useSection('details')
+  const guestsState = useSection('guests')
+  const budgetState = useSection('budget')
+  const checklistState = useSection('checklist')
+  const vendorsState = useSection('vendors')
+  const sync = useSync()
 
   return (
     <div className="app">
@@ -60,6 +51,8 @@ export default function App() {
         </nav>
       </header>
 
+      <SyncBadge status={sync.status} />
+
       <main className="content">
         {tab === 'dashboard' && (
           <Dashboard
@@ -75,12 +68,14 @@ export default function App() {
         {tab === 'guests' && <Guests state={guestsState} />}
         {tab === 'budget' && <Budget state={budgetState} />}
         {tab === 'vendors' && <Vendors state={vendorsState} />}
-        {tab === 'settings' && <Settings details={details} setDetails={setDetails} />}
+        {tab === 'settings' && <Settings details={details} setDetails={setDetails} sync={sync} />}
       </main>
 
       <footer className="footer">
         Made with <span className="heart">♥</span> for {details.partner1} &amp; {details.partner2}
-        &nbsp;·&nbsp; your plans are saved privately in this browser
+        {sync.configured
+          ? ' · your plan syncs automatically across your devices'
+          : ' · your plans are saved privately in this browser'}
       </footer>
     </div>
   )
