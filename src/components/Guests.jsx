@@ -13,6 +13,11 @@ export default function Guests({ state }) {
   const list = guests ?? []
   const [form, setForm] = useState({ name: '', party: 1, side: 'Both', rsvp: 'pending', meal: '' })
   const [filter, setFilter] = useState('all')
+  const [sort, setSort] = useState({ key: 'name', dir: 'asc' })
+
+  function toggleSort(key) {
+    setSort((s) => (s.key === key ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' }))
+  }
 
   function add(e) {
     e.preventDefault()
@@ -29,16 +34,41 @@ export default function Guests({ state }) {
   }
 
   const shown = list.filter((g) => filter === 'all' || g.rsvp === filter || (filter === 'pending' && !g.rsvp))
+
+  function sortVal(g, key) {
+    if (key === 'party') return Number(g.party) || 1
+    if (key === 'rsvp') return RSVP_OPTIONS.findIndex((o) => o.value === (g.rsvp || 'pending'))
+    return (g[key] || (key === 'side' ? 'Both' : '')).toString().toLowerCase()
+  }
+  const sorted = [...shown].sort((a, b) => {
+    const av = sortVal(a, sort.key)
+    const bv = sortVal(b, sort.key)
+    const c = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv))
+    return sort.dir === 'asc' ? c : -c
+  })
+
   const headcount = list.filter((g) => g.rsvp === 'yes').reduce((s, g) => s + (Number(g.party) || 1), 0)
   const invited = list.reduce((s, g) => s + (Number(g.party) || 1), 0)
   const declined = list.filter((g) => g.rsvp === 'no').length
   const pending = list.filter((g) => g.rsvp === 'pending' || !g.rsvp).length
+
+  // Headcount (sum of party sizes) split by which side each guest belongs to.
+  const sideCount = (side) =>
+    list.filter((g) => (g.side || 'Both') === side).reduce((s, g) => s + (Number(g.party) || 1), 0)
+  const timSide = sideCount('Tim')
+  const danielleSide = sideCount('Danielle')
+  const bothSide = sideCount('Both')
 
   return (
     <div>
       <div className="page-head">
         <h1>Guest List</h1>
         <p>{headcount} attending · {invited} invited · {pending} awaiting reply · {declined} declined</p>
+        <div className="side-split">
+          <span className="side-chip tim"><b>{timSide}</b> Tim’s side</span>
+          <span className="side-chip danielle"><b>{danielleSide}</b> Danielle’s side</span>
+          <span className="side-chip both"><b>{bothSide}</b> Both / shared</span>
+        </div>
       </div>
 
       <form className="card card-pad row" onSubmit={add}>
@@ -85,11 +115,16 @@ export default function Guests({ state }) {
           <table className="table">
             <thead>
               <tr>
-                <th>Name</th><th>Party</th><th>Side</th><th>RSVP</th><th>Meal / Notes</th><th></th>
+                <SortTh label="Name" k="name" sort={sort} onSort={toggleSort} />
+                <SortTh label="Party" k="party" sort={sort} onSort={toggleSort} />
+                <SortTh label="Side" k="side" sort={sort} onSort={toggleSort} />
+                <SortTh label="RSVP" k="rsvp" sort={sort} onSort={toggleSort} />
+                <th>Meal / Notes</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              {shown.map((g) => {
+              {sorted.map((g) => {
                 const opt = RSVP_OPTIONS.find((o) => o.value === (g.rsvp || 'pending'))
                 return (
                   <tr key={g.id}>
@@ -149,5 +184,21 @@ export default function Guests({ state }) {
         </div>
       )}
     </div>
+  )
+}
+
+function SortTh({ label, k, sort, onSort }) {
+  const active = sort.key === k
+  return (
+    <th>
+      <button
+        className={`th-sort ${active ? 'active' : ''}`}
+        onClick={() => onSort(k)}
+        aria-label={`Sort by ${label}`}
+      >
+        {label}
+        <span className="sort-arrow">{active ? (sort.dir === 'asc' ? '▲' : '▼') : '↕'}</span>
+      </button>
+    </th>
   )
 }

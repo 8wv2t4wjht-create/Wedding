@@ -238,6 +238,34 @@ input:focus, select:focus, textarea:focus {
 .table tr:last-child td { border-bottom: none; }
 .table-wrap { overflow-x: auto; }
 
+/* Sortable column headers */
+.th-sort {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; background: transparent; cursor: pointer;
+  font: inherit; letter-spacing: 1px; text-transform: uppercase;
+  font-size: .72rem; color: var(--ink-soft); padding: 0;
+  transition: color .15s ease;
+}
+.th-sort:hover { color: var(--ink); }
+.th-sort.active { color: var(--blush-dark); }
+.sort-arrow { font-size: .62rem; opacity: .55; }
+.th-sort.active .sort-arrow { opacity: 1; }
+
+/* Side split (Tim vs Danielle headcount) */
+.side-split { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.side-chip {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 5px 13px; border-radius: 999px; font-size: .82rem;
+  border: 1px solid var(--line); background: #fff; color: var(--ink-soft);
+}
+.side-chip b { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+.side-chip.tim { background: #eef2f6; border-color: #dde6ee; }
+.side-chip.tim b { color: #47617d; }
+.side-chip.danielle { background: #f7edf1; border-color: #ecd9e2; }
+.side-chip.danielle b { color: #97527a; }
+.side-chip.both { background: var(--blush-soft); border-color: #eeddd4; }
+.side-chip.both b { color: var(--blush-dark); }
+
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: .78rem; letter-spacing: .3px; }
 .pill.yes { background: #e7f0e3; color: #4f6b45; }
 .pill.no { background: #f6e4e4; color: #a24d4d; }
