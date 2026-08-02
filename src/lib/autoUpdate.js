@@ -16,7 +16,12 @@ async function check() {
     // any chance of a reload loop while a CDN is mid-propagation.
     if (Number(id) > Number(CURRENT) && sessionStorage.getItem(GUARD) !== String(id)) {
       sessionStorage.setItem(GUARD, String(id))
-      window.location.reload()
+      // Navigate to a cache-busted URL (rather than a plain reload) so a
+      // cached index.html can't keep us on the old version. Existing query
+      // params — including the plan's space/key — are preserved.
+      const url = new URL(window.location.href)
+      url.searchParams.set('_v', String(id))
+      window.location.replace(url.toString())
     }
   } catch {
     /* offline or unreachable — try again next time */
