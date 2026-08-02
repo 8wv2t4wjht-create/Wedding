@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Home Budget Estimator · Dream Big Home Design</title>
+  <meta name="description" content="Choose your options and get an instant, transparent ballpark for your new custom home — size, quality tier, finishes, and features." />
+  <link rel="stylesheet" href="estimator.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="masthead">
+      <div class="brand">
+        <div class="brand-mark">D</div>
+        <div>
+          <div class="brand-name">Dream Big Home Design</div>
+          <div class="brand-tag">Custom Home Budget Estimator</div>
+        </div>
+      </div>
+      <div class="tools">
+        <button class="ghost" id="themeBtn" type="button" aria-label="Toggle light or dark theme">Theme</button>
+        <button class="ghost" id="resetBtn" type="button">Reset</button>
+        <button class="ghost" id="printBtn" type="button">Save / print</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1>What will your <em>custom home</em> cost?</h1>
+      <p>Every home is different, and your material choices move the number more than almost anything.
+         Pick the options that fit your vision below and watch a transparent, itemized estimate build in
+         real time. It's a planning range to start the conversation — not a quote.</p>
+    </section>
+
+    <div class="grid">
+      <!-- LEFT: choices -->
+      <div>
+        <section class="panel">
+          <div class="sec-head"><span class="sec-num">01</span><h2 class="sec-title">The basics</h2></div>
+          <p class="sec-desc">Size and location set the foundation of the estimate.</p>
+          <div id="basics"></div>
+        </section>
+
+        <section class="panel">
+          <div class="sec-head"><span class="sec-num">02</span><h2 class="sec-title">Overall quality</h2></div>
+          <p class="sec-desc">The single biggest driver. This sets your starting point per square foot.</p>
+          <div class="tiers" id="tiers"></div>
+        </section>
+
+        <section class="panel">
+          <div class="sec-head"><span class="sec-num">03</span><h2 class="sec-title">Finishes &amp; materials</h2></div>
+          <p class="sec-desc">This is where budgets really move. Each upgrade shows what it adds per square foot.</p>
+          <div id="materials"></div>
+        </section>
+
+        <section class="panel">
+          <div class="sec-head"><span class="sec-num">04</span><h2 class="sec-title">Add-ons &amp; site features</h2></div>
+          <p class="sec-desc">Optional spaces and features, priced as flat amounts for your market.</p>
+          <div id="addons"></div>
+        </section>
+
+        <section class="panel">
+          <div class="sec-head"><span class="sec-num">05</span><h2 class="sec-title">Contingency</h2></div>
+          <p class="sec-desc">A cushion for the surprises every build encounters. We recommend 10%.</p>
+          <div id="contingency"></div>
+        </section>
+      </div>
+
+      <!-- RIGHT: live estimate -->
+      <aside class="summary" aria-label="Your estimate">
+        <div class="est-card">
+          <div class="est-eyebrow">Your estimated build</div>
+          <div class="est-range">
+            <span id="estLow">$0</span><span class="dash">–</span><span id="estHigh">$0</span>
+          </div>
+          <div class="est-sub">
+            <span class="chip est-persqft" id="estPerSqft">$0 / sq ft</span>
+            <span id="estMid">Midpoint $0</span>
+          </div>
+
+          <div class="breakdown" id="breakdown"></div>
+        </div>
+
+        <p class="insight" id="insight" hidden></p>
+
+        <button class="cta" id="ctaBtn" type="button">Request a detailed quote</button>
+
+        <p class="fineprint">
+          <strong>What this includes:</strong> home construction — structure, finishes, and the features you
+          selected. <strong>Not included:</strong> land, site-specific work (long driveways, steep lots, wells &amp;
+          septic), design &amp; engineering fees, permits, and financing. Figures are 2026 ballparks and shown as a
+          range because a firm price needs your plans and site. Ready when you are.
+        </p>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Sticky running total on small screens -->
+  <div class="mobar" aria-hidden="true">
+    <div>
+      <div class="mobar-label">Estimated build</div>
+      <div class="mobar-val" id="barRange">$0 – $0</div>
+    </div>
+    <button class="cta" type="button" onclick="document.getElementById('ctaBtn').click()">Get a quote</button>
+  </div>
+
+  <script>
+    // Standalone theme toggle (in the hosted Artifact the viewer controls theme).
+    (function () {
+      var btn = document.getElementById('themeBtn');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var root = document.documentElement;
+        var now = root.getAttribute('data-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var next = now ? (now === 'dark' ? 'light' : 'dark') : (prefersDark ? 'light' : 'dark');
+        root.setAttribute('data-theme', next);
+      });
+    })();
+  </script>
+  <script src="estimator.js"></script>
+</body>
+</html>
