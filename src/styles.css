@@ -143,6 +143,10 @@ input, select, textarea { font-family: inherit; }
   display: grid; place-items: center; transition: all .15s ease;
 }
 .icon-btn:hover { background: var(--blush-soft); color: var(--danger); }
+.icon-btn.move { width: 24px; height: 18px; font-size: .62rem; }
+.icon-btn.move:hover { color: var(--blush-dark); }
+.icon-btn.move:disabled { opacity: .25; cursor: default; background: transparent; }
+.move-col { display: inline-flex; flex-direction: column; gap: 1px; }
 
 /* ---------- Forms ---------- */
 .field { display: flex; flex-direction: column; gap: 5px; }

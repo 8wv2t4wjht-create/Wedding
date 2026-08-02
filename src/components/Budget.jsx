@@ -6,6 +6,7 @@ import { uid } from '../lib/storage.js'
 export default function Budget({ state }) {
   const [cats, setCats] = state
   const [newName, setNewName] = useState('')
+  const [sort, setSort] = useState({ key: null, dir: 'asc' })
 
   useEffect(() => {
     if (cats == null) setCats(defaultBudgetCategories())
@@ -27,8 +28,37 @@ export default function Budget({ state }) {
     e.preventDefault()
     const name = newName.trim()
     if (!name) return
-    setCats([...list, { id: uid(), name, estimated: 0, actual: 0 }])
+    setCats([...list, { id: uid(), name, estimated: 0, actual: 0, notes: '' }])
     setNewName('')
+  }
+
+  // Nudge a row one position up (-1) or down (+1) in the saved order.
+  function move(id, dir) {
+    const i = list.findIndex((c) => c.id === id)
+    const j = i + dir
+    if (i < 0 || j < 0 || j >= list.length) return
+    const next = [...list]
+    ;[next[i], next[j]] = [next[j], next[i]]
+    setCats(next)
+  }
+
+  // Sorting reorders the saved list itself, so it stays consistent with the
+  // manual up/down moves — there's one canonical order.
+  function sortBy(key) {
+    const dir = sort.key === key && sort.dir === 'asc' ? 'desc' : 'asc'
+    const val = (c) => {
+      if (key === 'name') return (c.name || '').toLowerCase()
+      if (key === 'diff') return (Number(c.estimated) || 0) - (Number(c.actual) || 0)
+      return Number(c[key]) || 0
+    }
+    const next = [...list].sort((a, b) => {
+      const av = val(a)
+      const bv = val(b)
+      const c = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv))
+      return dir === 'asc' ? c : -c
+    })
+    setSort({ key, dir })
+    setCats(next)
   }
 
   return (
@@ -55,18 +85,38 @@ export default function Budget({ state }) {
         <table className="table">
           <thead>
             <tr>
-              <th>Category</th>
-              <th className="right">Estimated</th>
-              <th className="right">Actual</th>
-              <th className="right">Difference</th>
+              <th style={{ width: 44 }}></th>
+              <SortTh label="Category" k="name" sort={sort} onSort={sortBy} />
+              <SortTh label="Estimated" k="estimated" sort={sort} onSort={sortBy} align="right" />
+              <SortTh label="Actual" k="actual" sort={sort} onSort={sortBy} align="right" />
+              <SortTh label="Difference" k="diff" sort={sort} onSort={sortBy} align="right" />
+              <th>Notes</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {list.map((c) => {
+            {list.map((c, i) => {
               const diff = (Number(c.estimated) || 0) - (Number(c.actual) || 0)
               return (
                 <tr key={c.id}>
+                  <td>
+                    <div className="move-col">
+                      <button
+                        className="icon-btn move"
+                        onClick={() => move(c.id, -1)}
+                        disabled={i === 0}
+                        aria-label="Move up"
+                        title="Move up"
+                      >▲</button>
+                      <button
+                        className="icon-btn move"
+                        onClick={() => move(c.id, 1)}
+                        disabled={i === list.length - 1}
+                        aria-label="Move down"
+                        title="Move down"
+                      >▼</button>
+                    </div>
+                  </td>
                   <td>
                     <input
                       style={{ padding: '6px 9px', minWidth: 140 }}
@@ -83,6 +133,14 @@ export default function Budget({ state }) {
                   <td className="right" style={{ color: diff < 0 ? 'var(--danger)' : 'var(--sage)' }}>
                     {currency(diff)}
                   </td>
+                  <td>
+                    <input
+                      style={{ padding: '6px 9px', fontSize: '.88rem', minWidth: 160 }}
+                      value={c.notes || ''}
+                      onChange={(e) => update(c.id, { notes: e.target.value })}
+                      placeholder="Deposit paid, who's paying, due date…"
+                    />
+                  </td>
                   <td className="right"><button className="icon-btn" onClick={() => remove(c.id)} aria-label="Remove">✕</button></td>
                 </tr>
               )
@@ -90,10 +148,12 @@ export default function Budget({ state }) {
           </tbody>
           <tfoot>
             <tr>
+              <td></td>
               <td style={{ fontWeight: 500 }}>Total</td>
               <td className="right" style={{ fontWeight: 500 }}>{currency(est)}</td>
               <td className="right" style={{ fontWeight: 500 }}>{currency(actual)}</td>
               <td className="right" style={{ fontWeight: 500, color: remaining < 0 ? 'var(--danger)' : 'var(--sage)' }}>{currency(remaining)}</td>
+              <td></td>
               <td></td>
             </tr>
           </tfoot>
@@ -108,6 +168,22 @@ export default function Budget({ state }) {
         <button className="btn" type="submit">Add category</button>
       </form>
     </div>
+  )
+}
+
+function SortTh({ label, k, sort, onSort, align }) {
+  const active = sort.key === k
+  return (
+    <th className={align === 'right' ? 'right' : undefined}>
+      <button
+        className={`th-sort ${active ? 'active' : ''}`}
+        onClick={() => onSort(k)}
+        aria-label={`Sort by ${label}`}
+      >
+        {label}
+        <span className="sort-arrow">{active ? (sort.dir === 'asc' ? '▲' : '▼') : '↕'}</span>
+      </button>
+    </th>
   )
 }
 
