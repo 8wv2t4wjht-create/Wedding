@@ -1,16 +1,18 @@
 :root {
-  --bg: #faf6f2;
+  /* Green & white — the bride's colours. The accent variables keep their
+     original names so every component picks up the new hue automatically. */
+  --bg: #f4faf5;
   --bg-panel: #ffffff;
-  --ink: #43352f;
-  --ink-soft: #7b6a62;
-  --line: #ece2da;
-  --blush: #b98a7a;
-  --blush-dark: #a2705f;
-  --blush-soft: #f3e6df;
-  --sage: #8a9a82;
-  --gold: #c6a15b;
-  --danger: #c46b6b;
-  --shadow: 0 10px 30px rgba(93, 66, 55, 0.08);
+  --ink: #21322a;
+  --ink-soft: #5c6f63;
+  --line: #e0ebe3;
+  --blush: #4f7d5e;        /* primary green */
+  --blush-dark: #3a6248;   /* deep green (hover / emphasis) */
+  --blush-soft: #e4f0e8;   /* soft green tint */
+  --sage: #6f9a7d;         /* secondary green */
+  --gold: #c2a35f;         /* subtle warm accent, used sparingly */
+  --danger: #c1584f;
+  --shadow: 0 10px 30px rgba(28, 66, 42, 0.09);
   --radius: 16px;
   --serif: 'Cormorant Garamond', Georgia, serif;
   --sans: 'Jost', system-ui, -apple-system, sans-serif;
@@ -25,7 +27,7 @@ body {
   font-family: var(--sans);
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 80% -10%, #f6eae1 0%, transparent 60%),
+    radial-gradient(1200px 600px at 80% -10%, #e3f0e7 0%, transparent 60%),
     var(--bg);
   -webkit-font-smoothing: antialiased;
   font-weight: 300;
@@ -202,7 +204,7 @@ input:focus, select:focus, textarea:focus {
 
 /* ---------- Progress bar ---------- */
 .progress { height: 9px; border-radius: 999px; background: var(--blush-soft); overflow: hidden; }
-.progress > span { display: block; height: 100%; background: linear-gradient(90deg, var(--blush), var(--gold)); border-radius: 999px; transition: width .4s ease; }
+.progress > span { display: block; height: 100%; background: linear-gradient(90deg, var(--blush-dark), var(--sage)); border-radius: 999px; transition: width .4s ease; }
 
 /* ---------- Checklist ---------- */
 .phase { margin-bottom: 8px; }
@@ -265,10 +267,10 @@ input:focus, select:focus, textarea:focus {
 .side-chip b { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--ink); }
 .side-chip.tim { background: #eef2f6; border-color: #dde6ee; }
 .side-chip.tim b { color: #47617d; }
-.side-chip.danielle { background: #f7edf1; border-color: #ecd9e2; }
-.side-chip.danielle b { color: #97527a; }
-.side-chip.both { background: var(--blush-soft); border-color: #eeddd4; }
-.side-chip.both b { color: var(--blush-dark); }
+.side-chip.danielle { background: #e6f0e8; border-color: #d3e5d8; }
+.side-chip.danielle b { color: var(--blush-dark); }
+.side-chip.both { background: #f2f3ef; border-color: #e5e8df; }
+.side-chip.both b { color: var(--ink-soft); }
 
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: .78rem; letter-spacing: .3px; }
 .pill.yes { background: #e7f0e3; color: #4f6b45; }
