@@ -233,6 +233,51 @@ input:focus, select:focus, textarea:focus {
 .check.on { background: var(--blush); }
 .task-title { flex: 1; font-size: .96rem; }
 
+/* Inline-editable task / step text — looks like text until focused. */
+.task-title-input {
+  flex: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 8px;
+  font-size: .96rem;
+  font-weight: 300;
+  color: var(--ink);
+  border-radius: 8px;
+  min-width: 0;
+}
+.task-title-input:hover { background: #fbfdfb; }
+.task-title-input:focus {
+  outline: none;
+  border-color: var(--blush);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--blush-soft);
+}
+.task.done .task-title-input { text-decoration: line-through; color: var(--ink-soft); }
+
+.task-group { margin-bottom: 8px; }
+.task-group .task { margin-bottom: 0; }
+
+.check.sm { width: 18px; height: 18px; border-radius: 6px; font-size: .68rem; }
+
+.sub-progress {
+  flex: 0 0 auto; font-size: .72rem; color: var(--blush-dark);
+  background: var(--blush-soft); border-radius: 999px; padding: 2px 9px;
+}
+.icon-btn.add-sub { color: var(--blush-dark); font-size: 1.05rem; }
+.icon-btn.add-sub:hover { background: var(--blush-soft); color: var(--blush-dark); }
+
+.subtasks {
+  margin: 2px 0 0 34px;
+  padding-left: 14px;
+  border-left: 2px solid var(--line);
+}
+.subtask {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 8px; border-radius: 9px;
+}
+.subtask:hover { background: #fbfdfb; }
+.subtask.done .task-title-input { text-decoration: line-through; color: var(--ink-soft); }
+
 /* ---------- Tables ---------- */
 .table { width: 100%; border-collapse: collapse; }
 .table th {
