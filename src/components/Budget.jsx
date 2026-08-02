@@ -6,7 +6,6 @@ import { uid } from '../lib/storage.js'
 export default function Budget({ state }) {
   const [cats, setCats] = state
   const [newName, setNewName] = useState('')
-  const [sort, setSort] = useState({ key: null, dir: 'asc' })
 
   useEffect(() => {
     if (cats == null) setCats(defaultBudgetCategories())
@@ -42,25 +41,6 @@ export default function Budget({ state }) {
     setCats(next)
   }
 
-  // Sorting reorders the saved list itself, so it stays consistent with the
-  // manual up/down moves — there's one canonical order.
-  function sortBy(key) {
-    const dir = sort.key === key && sort.dir === 'asc' ? 'desc' : 'asc'
-    const val = (c) => {
-      if (key === 'name') return (c.name || '').toLowerCase()
-      if (key === 'diff') return (Number(c.estimated) || 0) - (Number(c.actual) || 0)
-      return Number(c[key]) || 0
-    }
-    const next = [...list].sort((a, b) => {
-      const av = val(a)
-      const bv = val(b)
-      const c = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv))
-      return dir === 'asc' ? c : -c
-    })
-    setSort({ key, dir })
-    setCats(next)
-  }
-
   return (
     <div>
       <div className="page-head">
@@ -86,10 +66,10 @@ export default function Budget({ state }) {
           <thead>
             <tr>
               <th style={{ width: 44 }}></th>
-              <SortTh label="Category" k="name" sort={sort} onSort={sortBy} />
-              <SortTh label="Estimated" k="estimated" sort={sort} onSort={sortBy} align="right" />
-              <SortTh label="Actual" k="actual" sort={sort} onSort={sortBy} align="right" />
-              <SortTh label="Difference" k="diff" sort={sort} onSort={sortBy} align="right" />
+              <th>Category</th>
+              <th className="right">Estimated</th>
+              <th className="right">Actual</th>
+              <th className="right">Difference</th>
               <th>Notes</th>
               <th></th>
             </tr>
@@ -168,22 +148,6 @@ export default function Budget({ state }) {
         <button className="btn" type="submit">Add category</button>
       </form>
     </div>
-  )
-}
-
-function SortTh({ label, k, sort, onSort, align }) {
-  const active = sort.key === k
-  return (
-    <th className={align === 'right' ? 'right' : undefined}>
-      <button
-        className={`th-sort ${active ? 'active' : ''}`}
-        onClick={() => onSort(k)}
-        aria-label={`Sort by ${label}`}
-      >
-        {label}
-        <span className="sort-arrow">{active ? (sort.dir === 'asc' ? '▲' : '▼') : '↕'}</span>
-      </button>
-    </th>
   )
 }
 
