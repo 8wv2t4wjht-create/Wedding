@@ -93,9 +93,36 @@ export default function Guests({ state }) {
                 const opt = RSVP_OPTIONS.find((o) => o.value === (g.rsvp || 'pending'))
                 return (
                   <tr key={g.id}>
-                    <td>{g.name}</td>
-                    <td>{g.party || 1}</td>
-                    <td className="muted">{g.side || 'Both'}</td>
+                    <td>
+                      <input
+                        style={{ padding: '6px 9px', minWidth: 150 }}
+                        value={g.name}
+                        onChange={(e) => update(g.id, { name: e.target.value })}
+                        aria-label="Guest name"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        style={{ padding: '6px 9px', maxWidth: 66 }}
+                        value={g.party || 1}
+                        onChange={(e) => update(g.id, { party: Number(e.target.value) || 1 })}
+                        aria-label="Party size"
+                      />
+                    </td>
+                    <td>
+                      <select
+                        className="select-inline"
+                        value={g.side || 'Both'}
+                        onChange={(e) => update(g.id, { side: e.target.value })}
+                        aria-label="Side"
+                      >
+                        <option>Both</option>
+                        <option>Tim</option>
+                        <option>Danielle</option>
+                      </select>
+                    </td>
                     <td>
                       <select
                         className={`select-inline pill ${opt.cls}`}
